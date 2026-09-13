@@ -1,1 +1,1 @@
-Make our URL API fast, secure and scalable.
+Make our URL shortener API fast, secure and scalable.
