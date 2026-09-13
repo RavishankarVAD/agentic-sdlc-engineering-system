@@ -1,0 +1,15 @@
+openapi: 3.1.0
+info: {title: Generated URL Shortener API, version: 0.1.0}
+paths:
+  /v1/urls:
+    post:
+      summary: Create a short URL
+      responses: {'201': {description: Created}, '422': {description: Invalid URL}}
+  /{code}:
+    get:
+      summary: Redirect to original URL
+      responses: {'307': {description: Redirect}, '404': {description: Unknown code}}
+  /v1/urls/{code}/analytics:
+    get:
+      summary: Get aggregate click analytics
+      responses: {'200': {description: Analytics}, '404': {description: Unknown code}}
