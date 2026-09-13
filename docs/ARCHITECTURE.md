@@ -12,7 +12,7 @@ flowchart TD
     P --> D[Architecture Agent]
     D --> G[Generation Agent]
     G --> V[Validation Agent]
-    V -->|failed and repairable| X[Bounded Repair]
+    V -->|failed and repairable| X[Feedback-driven bounded repair]
     X --> V
     V -->|passed| H{Human Approval Gate}
     H -->|approved| O[Engineering Outcome]
@@ -25,17 +25,17 @@ flowchart TD
 |---|---|---|
 | RequirementAgent | Intent, normalization, ambiguity and assumptions | RequirementAnalysis |
 | CodebaseAgent | Brownfield file/impact reasoning | Codebase impact context |
-| PlanningAgent | Dependency-aware task graph | Tasks |
+| PlanningAgent | Dependency-aware task graph, including context-specific brownfield tasks | Tasks |
 | ArchitectureAgent | Components, APIs, persistence, scaling, security, observability | ArchitectureDecision |
-| GenerationAgent | Code, contract, tests and plan | Artifact bundle |
-| ValidationAgent | Completeness, syntax, contract and safety checks | ValidationResult |
+| GenerationAgent | Code, contract, tests and plan; targeted repair of failed artifacts | Artifact bundle |
+| ValidationAgent | Completeness, syntax, contract, safety and generated-test execution | ValidationResult |
 | Human gate | Explicit oversight after automated validation | Approval state |
 
 ## Cross-step coordination
-Planning uses both requirement analysis and codebase reasoning. Architecture consumes normalized intent and assumptions. Generation is architecture-aware. Validation checks generation against mandatory domain expectations. Failed validation enters a bounded regeneration/repair loop rather than proceeding directly to approval.
+Planning consumes both requirement analysis and codebase reasoning. In brownfield mode, detected API/route, service, model/schema/database, and test impacts create additional dependency tasks before architecture. Generation consumes architecture decisions. Validation executes deterministic checks plus the generated test suite. Failed checks become explicit repair actions that are passed back into targeted repair before re-validation.
 
 ## Controlled autonomy
-Agents can execute without a person between every step, but the workflow is constrained by deterministic tool boundaries, a maximum repair count, validation guardrails and a final explicit approval state. The prototype never deploys generated code automatically.
+Agents can execute without a person between every step, but the workflow is constrained by deterministic tool boundaries, a maximum repair count, validation guardrails, time-bounded generated tests, and a final explicit approval state. The prototype never deploys generated code automatically.
 
 ## Brownfield design
-The prototype accepts `--codebase` and performs non-destructive inventory/impact reasoning. For production, this should be extended with language-aware AST/symbol extraction, dependency graphs, repository history and test-impact analysis.
+The prototype accepts `--codebase` and performs non-destructive inventory/impact reasoning. File impacts change the task graph, making API compatibility, service behavior, data-model/migration, and regression-test work explicit when matching areas are detected. For production, this should be extended with language-aware AST/symbol extraction, dependency graphs, repository history and test-impact analysis.
