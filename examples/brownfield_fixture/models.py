@@ -1,0 +1,2 @@
+class URLMapping:
+    pass
